@@ -68,50 +68,65 @@ def find_trees(num_nodes, edges):
 '''
 
 def find_trees(nodes, edges):
-	if nodes <= 0:
-		return []
-
-	# with only one node, since its in-degrees will be 0, therefore, we need to handle it separately
-	if nodes == 1:
-		return [0]
-
 	# a. Initialize the graph
-	inDegree = {i: 0 for i in range(nodes)}	# count of incoming edges
-	graph = {i: [] for i in range(nodes)}	# adjacency list graph
+	inDegree = {i: 0 for i in range(nodes)} # count of incoming edges
+	graph = {i: [] for i in range(nodes)}	 # adjacency list graph
 
 	# b. Build the graph
 	for edge in edges:
-		n1, n2 = edge[0], edge[1]
-		# since this is an undirected graph, therefore, add a link for both the nodes
-		graph[n1].append(n2)
-		graph[n2].append(n1)
-		# increment the in-degrees of both the nodes
-		inDegree[n1] += 1
-		inDegree[n2] += 1
+		parent, child = edge[0], edge[1]
+		graph[parent].append(child) # put the child into its parent's list
+		inDegree[child] += 1 # increment child's inDegree
+		parent, child = edge[1], edge[0]
+		graph[parent].append(child) # put the child into its parent's list
+		inDegree[child] += 1 # increment child's inDegree
 
-	# c. Find all leaves i.e., all nodes with 1 in-degrees
-	leaves = deque()
+	#print('inDegree = {}'.format(inDegree))
+	#print('graph = {}'.format(graph))
+
+	# c. Find all sources i.e., all vertices with 0 in-degrees
+	sources = deque()
+	max_inDegree = -1
 	for key in inDegree:
 		if inDegree[key] == 1:
-			leaves.append(key)
+			sources.append(key)
+		if inDegree[key] >= max_inDegree:
+			max_inDegree = inDegree[key]
+	#print('sources = {}'.format(sources))
+	#assert 1==2
+	if max_inDegree == 1 or max_inDegree == 0:
+		return sources
 
-	# d. Remove leaves level by level and subtract each leave's children's in-degrees.
-	# Repeat this until we are left with 1 or 2 nodes, which will be our answer.
-	# Any node that has already been a leaf cannot be the root of a minimum height tree, because
-	# its adjacent non-leaf node will always be a better candidate.
-	totalNodes = nodes
-	while totalNodes > 2:
-		leavesSize = len(leaves)
-		totalNodes -= leavesSize
-		for i in range(0, leavesSize):
-			vertex = leaves.popleft()
-			# get the node's children to decrement their in-degrees
+	# d. for each source, add it to the sortedOrder and subtract one from all of its children's in-degrees
+	# if a child's in-degree becomes zero, add it to the source queue
+	while True:
+
+		sources_list = []
+		while sources:
+			vertex = sources.popleft()
 			for child in graph[vertex]:
-				inDegree[child] -= 1
+				if inDegree[child] > 0:
+					inDegree[child] -= 1
+				if inDegree[vertex] > 0:
+					inDegree[vertex] -= 1
 				if inDegree[child] == 1:
-					leaves.append(child)
+					sources_list.append(child)
+		#print('sources_list = {}'.format(sources_list))
+		
+		max_inDegree = -1
+		for vertex in sources_list:
+			if inDegree[vertex] >= max_inDegree:
+				max_inDegree = inDegree[vertex]
+				sources.append(vertex)
 
-	return list(leaves)
+		#print('sources = {}'.format(sources))
+
+		if max_inDegree == 1 or max_inDegree == 0:
+			break
+
+
+
+	return sources
 
 
 
