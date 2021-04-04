@@ -1,72 +1,5 @@
 from collections import deque
 
-'''
-def switch(parent, child):
-	temp = parent
-	parent = child
-	child = temp
-	return parent, child
-
-def find_trees(num_nodes, edges):
-	
-	trees_height = []
-
-	for node in range(num_nodes):
-
-		inDegree = {i: 0 for i in range(num_nodes)} # count of incoming edges
-		graph = {i: [] for i in range(num_nodes)}	 # adjacency list graph
-
-		# b. Build the graph
-		for edge in edges:	
-			parent, child = edge[0], edge[1]
-			if child <= node and parent <= node:
-				parent, child = switch(parent, child)
-			elif child >= node and parent >= node:
-				parent, child = parent, child
-			elif parent <= node and child >= node:
-				parent, child = parent, child
-
-			print('p = {}, c= {}'.format(parent, child))
-			graph[parent].append(child) # put the child into its parent's list
-			inDegree[child] += 1 # increment child's inDegree
-
-		print('inDegree = {}'.format(inDegree))
-		print('graph = {}'.format(graph))
-
-		# c. Find all sources i.e., all vertices with 0 in-degrees
-		sources = deque()
-		for key in inDegree:
-			if inDegree[key] == 0:
-				sources.append(key)
-
-		count_level = 1
-
-		# d. for each source, add it to the sortedOrder and subtract one from all of its children's in-degrees
-		# if a child's in-degree becomes zero, add it to the source queue
-		while sources:
-			vertex = sources.popleft()
-			#sortedOrder.append(vertex)
-			flag = False
-			for child in graph[vertex]: # get the node's children to decrement their in-degrees
-				inDegree[child] -= 1
-				if inDegree[child] == 0:
-					sources.append(child)
-					flag = True
-			if flag:
-				count_level += 1
-		print('count_level = {}'.format(count_level))
-		trees_height.append(count_level)
-	
-
-	min_h = min(trees_height)
-	min_nodes = []
-	for node in range(num_nodes):
-		if min_h == trees_height[node]:
-			min_nodes.append(node)
-
-	return min_nodes
-'''
-
 def find_trees(nodes, edges):
 	# a. Initialize the graph
 	inDegree = {i: 0 for i in range(nodes)} # count of incoming edges
@@ -123,8 +56,6 @@ def find_trees(nodes, edges):
 
 		if max_inDegree == 1 or max_inDegree == 0:
 			break
-
-
 
 	return sources
 
